@@ -55,7 +55,7 @@ namespace WebApplication1
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Ludo}/{action=Index}");
+                    template: "{controller=Lobby}/{action=Index}");
             });
         }
     }

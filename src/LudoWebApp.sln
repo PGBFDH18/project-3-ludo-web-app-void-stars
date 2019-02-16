@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{45AA475C-7183-48B7-94B9-91E4446E5F12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LudoWeb", "WebApplication1\LudoWeb.csproj", "{45AA475C-7183-48B7-94B9-91E4446E5F12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

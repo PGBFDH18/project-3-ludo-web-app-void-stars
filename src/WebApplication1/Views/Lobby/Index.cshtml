@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>Here's all the games:</p>
+
+<p>
+@foreach (var game in ViewData["ListOfGames"] as IEnumerable<int>)
+{
+    <a href="Ludo">@game</a> <br />
+}
+</p>
