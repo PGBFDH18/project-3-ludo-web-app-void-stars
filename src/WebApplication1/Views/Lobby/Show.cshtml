@@ -1,0 +1,47 @@
+﻿
+
+<h2>New @ViewData["NewGameID"]</h2>
+
+<ul>
+    @foreach (var player in ViewData["Players"] as IEnumerable<LudoWebApp.Models.LudoPlayer>)
+    {
+        <li>  @player.Color </li>
+    }
+</ul>
+@if (ViewData["playername"] == null)
+{
+    <p>
+        Please enter player name.
+    </p>
+    <form method="post" action="AddPlayer">
+        <input type="hidden" id="GameID" name="GameID" value="@ViewData["NewGameID"]">
+        Player name: <br>
+        <input type="text" name="playername" value="red">
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+}
+else
+{
+    <p>
+        You are player @ViewData["playername"]
+    </p>
+}
+
+<p>
+    @ViewData["State"]
+</p>
+
+@if ((string)ViewData["State"] == "\"Started\"")
+{
+<p>Game has started. <a href="/Ludo?GameID=@ViewData["NewGameID"]&playername=@ViewData["playername"]">Click here to join.</a> </p>
+}
+else
+{
+    <form method="post" action="StartGame">
+    <input type="hidden" id="GameID" name="GameID" value="@ViewData["NewGameID"]">
+    <input type="hidden" name="playername" value="@ViewData["playername"]">
+    <br><br>
+    <input type="submit" value="StartGame">
+    </form>
+}
