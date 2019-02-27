@@ -1,0 +1,33 @@
+﻿@model IEnumerable<LudoApp.Models.GameModel>;
+
+@{
+    ViewData["Title"] = "GetGames";
+    Layout = "_Layout";
+}
+
+<h2>View</h2>
+
+
+
+@foreach (GameModel game in Model)
+{
+    <h1>@game.GameName : @game.Players.Count()</h1>
+    <form action="game/GetGame" method="get">
+        <input type="hidden" name="gameName" value="@game.GameName"> <br>
+        <input type="submit" value="Join">
+    </form>
+}
+
+
+
+
+
+<script src="~/js/GameHub.js"></script>
+
+<script>
+        setTimeout(function () { window.location.reload() }, 10000);
+</script>
+
+
+
+

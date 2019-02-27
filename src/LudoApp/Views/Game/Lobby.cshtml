@@ -1,0 +1,83 @@
+﻿@model GameModel
+
+@{
+    ViewData["Title"] = "Lobby";
+    Layout = "_Layout";
+}
+
+<h2>Lobby</h2>
+
+
+
+
+<h4>@Model.GameName</h4>
+
+@for (int i = 0; i < 4; i++)
+{
+    @if (Model.Players.Count() - 1 >= i)
+    {
+        <h1>@Model.Players[i].Name</h1> <br />
+    }
+
+
+}
+
+
+<textarea id="textArea"></textarea>
+<button id="Hellobutton" onclick="aFunction()">Hello</button>
+
+<button id="StartButton" onclick="StartGame()">Start Game</button>
+
+
+
+<script>
+
+   var player = "@ViewBag.Player";
+
+    if (player == "") {
+       // document.getElementById('Hellobutton').style.visibility = 'hidden';
+
+    }
+
+
+       function aFunction() {
+
+           var xhr = new XMLHttpRequest();
+           var url = "https://localhost:44397/game/AddPlayer";
+           xhr.open('POST', url, true);
+
+           xhr.setRequestHeader("Content-Type", "application/json");
+
+
+           var playername = $("#textArea").val();
+           var gamename = "@Model.GameName";
+
+           xhr.send(JSON.stringify({ PlayerName: playername, GameName: gamename }));
+
+           setTimeout(function () { window.location.reload() }, 3000);
+    };
+
+
+        function StartGame() {
+         var xhr = new XMLHttpRequest();
+           var url = "https://localhost:44397/game/StartGame?gameName=@Model.GameName";
+           xhr.open('POST', url, true);
+
+        
+            xhr.send();
+
+           setTimeout(function () { window.location.reload() }, 3000);
+    }
+
+    
+    
+</script>
+
+
+
+
+
+
+
+
+

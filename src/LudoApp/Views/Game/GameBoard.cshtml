@@ -1,0 +1,47 @@
+﻿@model GameModel
+@{
+    ViewData["Title"] = "GameBoard";
+}
+
+<h2>@Model.GameName</h2>
+
+<h2></h2>
+
+
+
+    var playercount = @Model.Players.Count;
+
+    @foreach (PlayerModel player in Model.Players)
+    {
+        if (player.TurnOrder == Model.CurrentTurn)
+        {
+            <script>
+                document.getElementById("@player.Name btn").style.hidden = false;
+            </script>
+        }
+        else
+        {
+            <script>
+                document.getElementById("@player.Name btn").style.hidden = true;
+            </script>
+        }
+
+    }
+
+
+@foreach (PlayerModel player in Model.Players)
+{
+
+    <h4>@player.Name</h4>
+    
+        foreach (PieceModel piece in player.Pieces)
+        {
+
+         <h5>ID: @piece.Id , Position: @piece.Position </h5>
+            <button id="@player.Name btn"></button>
+        }
+}
+
+
+
+
