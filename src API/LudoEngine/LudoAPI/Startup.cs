@@ -31,6 +31,7 @@ namespace LudoAPI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddScoped<IGameEngine, GameEngine>();
             services.AddScoped<IGameHelper, GameHelper>();
+           
 
             services.AddCors(options =>
             {

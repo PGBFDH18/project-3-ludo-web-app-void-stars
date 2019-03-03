@@ -81,17 +81,17 @@ namespace LudoAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("RollDie")]
-        public ActionResult<int> DiceRoll([FromBody] DummyGame gameInstance)
+        [HttpPost("RollDie")]
+        public ActionResult<int> RollDie([FromBody] DummyGame gameInstance)
         {
             Game currentGame = _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault();
             Player currentPlayer = currentGame.Players.Where(x => x.Name == gameInstance.PlayerName).FirstOrDefault();
 
             if (currentGame.CurrentTurn == currentPlayer.turnOrder)
             {
-                _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault().LatestRoll = _dice.Roll();
+                int real = _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault().LatestRoll = _dice.Roll();
 
-                return Ok(_gameEngine.LoadGames(gameInstance.GameName).First().LatestRoll);
+                return real;
             }
             else
                 return -1;

@@ -5,11 +5,45 @@
 
 <h2>@Model.GameName</h2>
 
+<h2></h2>
 
-<button onclick="RollDie()">Roll Die</button>
+<button id="RollBtn" onclick="RollDie()">Roll Die</button> <br />
+<h3 id="RollResult">No Rolls Has been Made</h3>
+
+    var playercount = @Model.Players.Count;
+
+    @Model.Players.Where(player => player.TurnOrder == Model.CurrentTurn).First();
+
+    @if (ViewBag.Player == Model.Players.Where(player => player.TurnOrder == Model.CurrentTurn).First().Name)
+    {
+        <script>
+            document.getElementById("RollBtn").style.hidden = true;
+        </script>
+    }
+    else
+    {
+        <script>
+            document.getElementById("RollBtn").style.hidden = false;
+        </script>
+    }
+    <button>Roll Die</button> <br />
+    <h3 id="RollResult">No Rolls Has been Made</h3>
 
 
-   
+
+
+    @foreach (PlayerModel player in Model.Players)
+    {
+
+        <h4>@player.Name</h4>
+
+        foreach (PieceModel piece in player.Pieces)
+        {
+
+            <h5>ID: @piece.Id , Position: @piece.Position </h5>
+            <button id="@player.Name btn">@player.Name</button>
+        }
+    }
 
     @foreach (PlayerModel player in Model.Players)
     {
@@ -29,38 +63,21 @@
     }
 
 
-@foreach (PlayerModel player in Model.Players)
-{
 
-    <h4>@player.Name</h4>
-    
-        foreach (PieceModel piece in player.Pieces)
-        {
-         <button id="@player.Name btn">@piece.Id , Position: @piece.Position </button>
-        }
-}
 
-<script>
 
-    var currentPlayer = "@ViewBag.Player";
-
+    <script>
     function RollDie() {
-
-           var xhr = new XMLHttpRequest();
-           var url = "https://localhost:44397/game/AddPlayer";
-           xhr.open('POST', url, true);
-
-           xhr.setRequestHeader("Content-Type", "application/json");
-
-
-           var playername = $(currentPlayer).val();
-           var gamename = "@Model.GameName";
-
-           xhr.send(JSON.stringify({ PlayerName: playername, GameName: gamename }));
-
-           setTimeout(function () { window.location.reload() }, 3000);
-    };
-
-</script>
+        $.ajax({
+            url: "/Game/RollDie",
+            type: "POST",
+            data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "@ViewBag.Player"  }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+    </script>
 
 
