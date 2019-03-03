@@ -5,11 +5,11 @@
 
 <h2>@Model.GameName</h2>
 
-<h2></h2>
+
+<button onclick="RollDie()">Roll Die</button>
 
 
-
-    var playercount = @Model.Players.Count;
+   
 
     @foreach (PlayerModel player in Model.Players)
     {
@@ -36,12 +36,31 @@
     
         foreach (PieceModel piece in player.Pieces)
         {
-
-         <h5>ID: @piece.Id , Position: @piece.Position </h5>
-            <button id="@player.Name btn"></button>
+         <button id="@player.Name btn">@piece.Id , Position: @piece.Position </button>
         }
 }
 
+<script>
 
+    var currentPlayer = "@ViewBag.Player";
+
+    function RollDie() {
+
+           var xhr = new XMLHttpRequest();
+           var url = "https://localhost:44397/game/AddPlayer";
+           xhr.open('POST', url, true);
+
+           xhr.setRequestHeader("Content-Type", "application/json");
+
+
+           var playername = $(currentPlayer).val();
+           var gamename = "@Model.GameName";
+
+           xhr.send(JSON.stringify({ PlayerName: playername, GameName: gamename }));
+
+           setTimeout(function () { window.location.reload() }, 3000);
+    };
+
+</script>
 
 

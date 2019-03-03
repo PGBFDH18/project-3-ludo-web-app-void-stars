@@ -61,12 +61,13 @@ namespace LudoApp.Controllers
 
 
                        ViewBag.CurrentPlayer = tempmodel.Players.Where(player =>
-                        player.Name == HttpContext.Session.GetString("Player") &&
                         player.TurnOrder == tempmodel.CurrentTurn
                        ).First().Name;
-          
-                        
-                        return Ok(View("GameBoard", tempmodel));
+
+
+                        ViewBag.Player = HttpContext.Session.GetString("Player");
+
+                        return View("GameBoard", tempmodel);
                     }
 
                 case "Won":
@@ -171,14 +172,13 @@ namespace LudoApp.Controllers
         }
 
         [HttpPost("StartGame")]
-        public void Start([FromBody] string gameName)
+        public void Start([FromQuery] string gameName)
         {
             var client = new RestClient("https://ludoapi20190130043502.azurewebsites.net");
 
 
-            RestRequest request = new RestRequest($"/api/game/startgame", Method.POST);
-            request.AddHeader("Content-type", "application/json");
-            request.AddJsonBody(new { gameName=gameName });
+            RestRequest request = new RestRequest($"/api/game/startgame?gameName={gameName}", Method.POST);
+            
 
             var ludoGameResponse = client.Execute(request);
         }
