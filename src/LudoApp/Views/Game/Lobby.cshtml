@@ -8,8 +8,6 @@
 <h2>Lobby</h2>
 
 
-
-
 <h4>@Model.GameName</h4>
 
 @for (int i = 0; i < 4; i++)
@@ -38,33 +36,32 @@
     }
 
 
-       function aFunction() {
+    function aFunction() {
+        var playername = $("#textArea").val();
+        var gamename = "@Model.GameName";
 
-           var xhr = new XMLHttpRequest();
-           var url = "https://localhost:44397/Game/AddPlayer";
-           xhr.open('POST', url, true);
+        $.ajax({
+            url: "/Game/AddPlayer",
+            type: "POST",
+            data: JSON.stringify({ PlayerName: playername, GameName: gamename }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                window.location.reload(true);
+            }
+        });
+    }
 
-           xhr.setRequestHeader("Content-Type", "application/json");
-
-
-           var playername = $("#textArea").val();
-           var gamename = "@Model.GameName";
-
-           xhr.send(JSON.stringify({ PlayerName: playername, GameName: gamename }));
-
-           setTimeout(function () { window.location.reload() }, 3000);
-    };
-
-
-        function StartGame() {
-         var xhr = new XMLHttpRequest();
-           var url = "https://localhost:44397/Game/StartGame?gameName=@Model.GameName";
-           xhr.open('POST', url, true);
-
-        
-            xhr.send();
-
-           setTimeout(function () { window.location.reload() }, 3000);
+    function StartGame() {
+        var gamename = "@Model.GameName";
+        $.ajax({
+            url: "/Game/StartGame",
+            type: "POST",
+            data: JSON.stringify({ PlayerName: "@ViewBag.Player", GameName: gamename }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                window.location.reload(true);
+            }
+        });
     }
 
     

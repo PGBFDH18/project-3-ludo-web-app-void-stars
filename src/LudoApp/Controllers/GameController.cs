@@ -37,14 +37,12 @@ namespace LudoApp.Controllers
             
             request.RequestFormat = DataFormat.Json;
             var LudoGameResponse = client.Execute<GameModel>(request);
-            GameModel tempmodel = new GameModel();
-            tempmodel = LudoGameResponse.Data;
+            GameModel tempmodel = LudoGameResponse.Data;
             
             switch(tempmodel.GameStatus)
             {
                 case "Lobby":
                     {
-
                         ViewBag.Player = HttpContext.Session.GetString("Player");
 
                         return View("Lobby", tempmodel);
@@ -52,7 +50,7 @@ namespace LudoApp.Controllers
 
                 case "Running":
                     {
-                        ViewBag.Player = HttpContext.Session.GetString("Player");
+                       ViewBag.Player = HttpContext.Session.GetString("Player");
 
                        ViewBag.CurrentPlayer = tempmodel.Players.Where(player =>
                         player.TurnOrder == tempmodel.CurrentTurn
@@ -96,7 +94,7 @@ namespace LudoApp.Controllers
         }
         
         [HttpPost]
-        public void AddPlayer([FromBody] DummyGame dummyGame)
+        public IActionResult AddPlayer([FromBody] DummyGame dummyGame)
         {
 
             HttpContext.Session.SetString("Player",dummyGame.PlayerName);
@@ -106,7 +104,7 @@ namespace LudoApp.Controllers
             request.AddJsonBody(new { gameName = dummyGame.GameName, PlayerName = dummyGame.PlayerName });
 
             var clientresponse = client.Execute(request);
-
+            return Ok();
         }
 
 
@@ -124,12 +122,12 @@ namespace LudoApp.Controllers
         }
 
         [HttpPost]
-        public void StartGame([FromQuery] string gameName)
+        public IActionResult StartGame([FromBody] DummyGame gameInstance)
         {
-            RestRequest request = new RestRequest($"/api/game/startgame?gameName={gameName}", Method.POST);
-          
-
+            RestRequest request = new RestRequest($"/api/game/StartGame?gameName={gameInstance.GameName}", Method.POST);
             var ludoGameResponse = client.Execute(request);
+
+            return Ok();
         }
 
         [HttpPost]
