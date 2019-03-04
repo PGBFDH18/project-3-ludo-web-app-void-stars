@@ -53,7 +53,7 @@ namespace LudoApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -64,7 +64,7 @@ namespace LudoApp
                 app.UseHsts();
             }
 
-            
+
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -77,8 +77,7 @@ namespace LudoApp
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Game}/{action=Game}/{id?}");
-                
+                    template: "{controller=Game}/{action=Index}");
             });
         }
     }

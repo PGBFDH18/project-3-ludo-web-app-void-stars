@@ -19,11 +19,8 @@ namespace LudoApp.Controllers
         public string pieceId { get; set; }
     }
 
-   [Route("[controller]")]
     public class GameController : Controller
     {
-        
-      
         public ActionResult Index()
         {
             var client = new RestClient("https://localhost:44350");
@@ -34,7 +31,7 @@ namespace LudoApp.Controllers
             return View(ludoGameResponse.Data);
         }
 
-        [HttpGet("GetGame")]
+        [HttpGet]
         public ActionResult GetGame([FromQuery] string gameName)
         {
             
@@ -80,7 +77,7 @@ namespace LudoApp.Controllers
             }
         }
         
-        [HttpPost("PostGame")]
+        [HttpPost]
         public IActionResult PostGame()
         {
             
@@ -98,10 +95,10 @@ namespace LudoApp.Controllers
             request.AddJsonBody(new { GameName = gamename, PlayerName = name });
             var ludoGameResponse = client.Execute(request);
 
-            return RedirectToAction("GetGame", gamename);
+            return RedirectToAction("GetGame", "Game", new { gameName = gamename });
         }
 
-        [HttpGet("CreateGame")]
+        [HttpGet]
         public IActionResult CreateGame()
         {
             return View();
@@ -109,7 +106,7 @@ namespace LudoApp.Controllers
 
 
         
-        [HttpPost("AddPlayer")]
+        [HttpPost]
         public void AddPlayer([FromBody] DummyGame dummyGame)
         {
 
@@ -128,14 +125,10 @@ namespace LudoApp.Controllers
 
 
 
-        [HttpPost("MovePiece")]
+        [HttpPost]
         public void MovePiece([FromBody] DummyGamePiece gameInstance)
         {
-
-            
-
             var client = new RestClient("https://localhost:44350");
-
 
             RestRequest request = new RestRequest($"/api/game/MovePiece", Method.POST);
             request.AddHeader("Content-type", "application/json");
@@ -144,12 +137,9 @@ namespace LudoApp.Controllers
                                       pieceId = gameInstance.pieceId });
 
             var ludoGameResponse = client.Execute(request);
-
-
-
         }
 
-        [HttpPost("StartGame")]
+        [HttpPost]
         public void Start([FromQuery] string gameName)
         {
             var client = new RestClient("https://localhost:44350");
@@ -161,7 +151,7 @@ namespace LudoApp.Controllers
             var ludoGameResponse = client.Execute(request);
         }
 
-        [HttpPost("RollDie")]
+        [HttpPost]
         public int RollDie([FromBody] DummyGame gameInstance)
         {
             var client = new RestClient("https://localhost:44350");
@@ -179,8 +169,5 @@ namespace LudoApp.Controllers
 
             return ludoGameResponse.Data;
         }
-        
-
-       
     }
 }
