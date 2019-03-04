@@ -34,20 +34,15 @@ namespace LudoApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddDistributedMemoryCache();
 
             services.AddSession(options =>
             {
                 options.Cookie.Name = ".AdventureWorks.Session";
-                options.IdleTimeout = TimeSpan.FromSeconds(10);
-                
+                //options.IdleTimeout = TimeSpan.FromSeconds(10); 
             });
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
-
-          
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
