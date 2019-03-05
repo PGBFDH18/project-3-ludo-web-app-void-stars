@@ -12,6 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Web.Cors;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
+using Serilog;
+using Serilog.Events;
+using Microsoft.Extensions.Logging;
+using Datalust.SerilogMiddlewareExample.Diagnostics;
+
 namespace LudoApp
 {
     public class Startup
@@ -19,7 +24,14 @@ namespace LudoApp
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            
+            Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+              .MinimumLevel.Override("System", LogEventLevel.Warning)
+              .Enrich.FromLogContext()
+              .WriteTo.Console()
+              .WriteTo.Seq("http://localhost:5341")
+              .CreateLogger();
+
         }
 
         public IConfiguration Configuration { get; }
@@ -27,6 +39,9 @@ namespace LudoApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(loggingBuilder =>
+                 loggingBuilder.AddSerilog(dispose: true));
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -46,8 +61,9 @@ namespace LudoApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddSerilog();
 
             if (env.IsDevelopment())
             {
@@ -59,7 +75,7 @@ namespace LudoApp
                 app.UseHsts();
             }
 
-
+            app.UseMiddleware<SerilogMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
