@@ -13,7 +13,7 @@ namespace LudoEngine
     {
         
         public int ID { get; set; }
-        public int Position { get; set; }
+        public int Position { get; set; } = 0;
         public PieceState State { get; set; }
         public Color PieceColor { get; private set; }
 
@@ -26,36 +26,9 @@ namespace LudoEngine
             State = PieceState.Fence;
             PieceColor = color;
             SpaceFromGoal = 57;
-            determineFencePos();
-            
         }
 
-        private void determineFencePos()
-        {
-            switch (PieceColor)
-            {
-                case Color.Red:
-                    {
-                        Position = -1;
-                        break;
-                    }
-                case Color.Green:
-                    {
-                        Position = -2;
-                        break;
-                    }
-                case Color.Yellow:
-                    {
-                        Position = -3;
-                        break;
-                    }
-                case Color.Blue:
-                    {
-                        Position = -4;
-                        break;
-                    }
-            }
-        }
+       
 
         private void DetermineStartPos()
         {
@@ -110,13 +83,11 @@ namespace LudoEngine
                 if (spaces == 6)
                 {
                     State = PieceState.Board;
-                    DetermineStartPos();
                     movePiece(6);
                 }
                 else if (spaces == 1)
                 {
                     State = PieceState.Board;
-                    DetermineStartPos();
                     movePiece(1);
                 }
             }

@@ -101,8 +101,8 @@ namespace LudoAPI.Controllers
         [HttpPost("MovePiece")]
         public void MovePiece([FromBody]DummyGamePiece gameInstance)
         {
-            Game currentGame = _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault();
-            Player currentPlayer = currentGame.Players.Where(x => x.Name == gameInstance.PlayerName).FirstOrDefault();
+            Game currentGame = _gameEngine.LoadGames(gameInstance.GameName).First();
+            Player currentPlayer = currentGame.Players.Where(x => x.Name == gameInstance.PlayerName).First();
 
             if (currentGame.CurrentTurn == currentPlayer.turnOrder)
             {

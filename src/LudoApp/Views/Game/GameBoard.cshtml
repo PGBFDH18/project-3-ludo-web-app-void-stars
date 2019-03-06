@@ -10,7 +10,9 @@
 <button id="RollBtn" onclick="RollDie()">Roll Die</button> <br />
 <h3 id="RollResult">No Rolls Has been Made</h3>
 
-    var playercount = @Model.Players.Count;
+<h1>"@ViewBag.Player"</h1>
+
+    
 
     @Model.Players.Where(player => player.TurnOrder == Model.CurrentTurn).First();
 
@@ -26,11 +28,6 @@
             document.getElementById("RollBtn").style.hidden = false;
         </script>
     }
-    <button>Roll Die</button> <br />
-    <h3 id="RollResult">No Rolls Has been Made</h3>
-
-
-
 
     @foreach (PlayerModel player in Model.Players)
     {
@@ -41,13 +38,13 @@
         {
 
             <h5>ID: @piece.Id , Position: @piece.Position </h5>
-            <button id="@player.Name btn">@player.Name</button>
+            <button id="@player.Name btn" onclick="MovePiece(@piece.Id)">@player.Name</button>
         }
     }
 
     @foreach (PlayerModel player in Model.Players)
     {
-        if (player.TurnOrder == Model.CurrentTurn)
+        if (player.TurnOrder == Model.CurrentTurn && player.Name == ViewBag.Player)
         {
             <script>
                 document.getElementById("@player.Name btn").style.hidden = false;
@@ -62,8 +59,7 @@
 
     }
 
-
-
+    
 
 
     <script>
@@ -71,13 +67,54 @@
         $.ajax({
             url: "/Game/RollDie",
             type: "POST",
-            data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "@ViewBag.Player"  }),
+            data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "FirstPlayer"  }), //  FirstPlayer is the only client making calls, CHANGE TO ViewBag.Player When Testing Sessions
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                alert(data);
+
+            }
+        });
+
+        GetGameData();
+        }
+
+    //FirstPlayer
+    //Working fine
+
+        function MovePiece(pieceId) {
+            $.ajax({
+            url: "/Game/MovePiece",
+                type: "POST",
+                data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "FirstPlayer", PieceId: pieceId }), // Same story here
             contentType: "application/json; charset=utf-8",
             success: function (data) {
                 alert(data);
             }
-        });
-    }
+            });
+
+            GetGameData();
+        }
+
+        function GetGameData() {
+            $.ajax({
+            url: "/Game/GetGameModel?gameName="+"@Model.GameName",
+                type: "GET",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                alert(data);
+
+                var Object = JSON.parse(data);
+
+                if (data.currentTurn != @Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder) {
+                    document.getElementById('RollBtn').disabled = true; 
+                }
+
+
+            }
+            });
+        }
+
+
     </script>
 
 

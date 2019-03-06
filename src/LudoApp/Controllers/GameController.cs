@@ -4,6 +4,7 @@ using RestSharp;
 using LudoApp.Models;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace LudoApp.Controllers
 {
@@ -16,7 +17,7 @@ namespace LudoApp.Controllers
 
     public class DummyGamePiece : DummyGame
     {
-        public string pieceId { get; set; }
+        public string PieceId { get; set; }
     }
 
     public class GameController : Controller
@@ -27,6 +28,9 @@ namespace LudoApp.Controllers
             RestRequest request = new RestRequest("/api/game", Method.GET);
             request.RequestFormat = DataFormat.Json;
             var ludoGameResponse = client.Execute<List<GameModel>>(request);
+
+            ViewBag.Player = HttpContext.Session.GetString("Player");
+
             return View(ludoGameResponse.Data);
         }
 
@@ -38,8 +42,10 @@ namespace LudoApp.Controllers
             request.RequestFormat = DataFormat.Json;
             var LudoGameResponse = client.Execute<GameModel>(request);
             GameModel tempmodel = LudoGameResponse.Data;
-            
-            switch(tempmodel.GameStatus)
+
+           
+
+            switch (tempmodel.GameStatus)
             {
                 case "Lobby":
                     {
@@ -70,6 +76,18 @@ namespace LudoApp.Controllers
                         return NotFound();
                     }
             }
+        }
+
+        [HttpGet]
+        public string GetGameModel([FromQuery] string gameName)
+        {
+            RestRequest request = new RestRequest($"/api/game/gamebyid?gameName={gameName}", Method.GET);
+
+            request.RequestFormat = DataFormat.Json;
+            var LudoGameResponse = client.Execute<GameModel>(request);
+            GameModel tempmodel = LudoGameResponse.Data;
+
+            return  JsonConvert.SerializeObject(tempmodel);
         }
         
         [HttpPost]
@@ -116,7 +134,8 @@ namespace LudoApp.Controllers
             request.AddHeader("Content-type", "application/json");
             request.AddJsonBody(new { GameName = gameInstance.GameName,
                                       PlayerName = gameInstance.PlayerName,
-                                      pieceId = gameInstance.pieceId });
+                                      PieceId = gameInstance.PieceId });
+
 
             var ludoGameResponse = client.Execute(request);
         }
