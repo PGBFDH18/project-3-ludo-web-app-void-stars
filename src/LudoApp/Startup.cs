@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using Serilog.Events;
 using Microsoft.Extensions.Logging;
-using Datalust.SerilogMiddlewareExample.Diagnostics;
 
 namespace LudoApp
 {
@@ -75,7 +74,7 @@ namespace LudoApp
                 app.UseHsts();
             }
 
-            app.UseMiddleware<SerilogMiddleware>();
+            //app.UseMiddleware<SerilogMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

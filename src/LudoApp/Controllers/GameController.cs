@@ -5,6 +5,7 @@ using LudoApp.Models;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace LudoApp.Controllers
 {
@@ -23,6 +24,13 @@ namespace LudoApp.Controllers
     public class GameController : Controller
     {
         private RestClient client = new RestClient("https://localhost:44350");
+        private ILogger logger;
+
+        public GameController(ILogger<GameController> l)
+        {
+            logger = l;
+        }
+
         public ActionResult Index()
         {
             RestRequest request = new RestRequest("/api/game", Method.GET);
@@ -30,6 +38,8 @@ namespace LudoApp.Controllers
             var ludoGameResponse = client.Execute<List<GameModel>>(request);
 
             ViewBag.Player = HttpContext.Session.GetString("Player");
+
+            logger.LogInformation($"Show index page for player {ViewBag.Player}");
 
             return View(ludoGameResponse.Data);
         }
@@ -43,14 +53,12 @@ namespace LudoApp.Controllers
             var LudoGameResponse = client.Execute<GameModel>(request);
             GameModel tempmodel = LudoGameResponse.Data;
 
-           
-
             switch (tempmodel.GameStatus)
             {
                 case "Lobby":
                     {
                         ViewBag.Player = HttpContext.Session.GetString("Player");
-
+                        logger.LogInformation($"Show lobby information about '{gameName}' for player '{ViewBag.Player}'");
                         return View("Lobby", tempmodel);
                     }
 
@@ -61,13 +69,16 @@ namespace LudoApp.Controllers
                        ViewBag.CurrentPlayer = tempmodel.Players.Where(player =>
                         player.TurnOrder == tempmodel.CurrentTurn
                        ).First().Name;
-          
-                        
+
+                        logger.LogInformation($"Show information about '{gameName}' for player '{ViewBag.Player}'");
+                        logger.LogInformation($"Game '{gameName}' is running and it's player {ViewBag.CurrentPlayer}'s turn");
+
                         return View("GameBoard", tempmodel);
                     }
 
                 case "Won":
                     {
+                        logger.LogInformation($"Show information about finished game '{gameName}'");
                         return View("Victory", tempmodel);
                     }
 
@@ -121,6 +132,8 @@ namespace LudoApp.Controllers
             request.AddHeader("Content-type", "application/json");
             request.AddJsonBody(new { gameName = dummyGame.GameName, PlayerName = dummyGame.PlayerName });
 
+            logger.LogInformation($"Adding player '{dummyGame.PlayerName}' to game '{dummyGame.GameName}'");
+
             var clientresponse = client.Execute(request);
             return Ok();
         }
@@ -136,6 +149,7 @@ namespace LudoApp.Controllers
                                       PlayerName = gameInstance.PlayerName,
                                       PieceId = gameInstance.PieceId });
 
+            logger.LogInformation($"Player '{gameInstance.PlayerName}' is moving piece {gameInstance.PieceId} in game '{gameInstance.GameName}'");
 
             var ludoGameResponse = client.Execute(request);
         }
@@ -145,6 +159,8 @@ namespace LudoApp.Controllers
         {
             RestRequest request = new RestRequest($"/api/game/StartGame?gameName={gameInstance.GameName}", Method.POST);
             var ludoGameResponse = client.Execute(request);
+
+            logger.LogInformation($"Player '{gameInstance.PlayerName}' is starting game '{gameInstance.GameName}'");
 
             return Ok();
         }
@@ -161,6 +177,8 @@ namespace LudoApp.Controllers
             });
 
             var ludoGameResponse = client.Execute<int>(request);
+
+            logger.LogInformation($"Player '{gameInstance.PlayerName}' is rolling the dice in game '{gameInstance.GameName}'");
 
             return ludoGameResponse.Data;
         }
