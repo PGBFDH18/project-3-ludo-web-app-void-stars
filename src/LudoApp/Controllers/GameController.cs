@@ -6,13 +6,16 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace LudoApp.Controllers
 {
 
     public class DummyGame
     {
+        [Required]
         public string GameName { get; set; }
+        [Required]
         public string PlayerName { get; set; }
     }
 
@@ -41,6 +44,9 @@ namespace LudoApp.Controllers
 
             logger.LogInformation($"Show index page for player {ViewBag.Player}");
 
+
+            
+
             return View(ludoGameResponse.Data);
         }
 
@@ -52,6 +58,8 @@ namespace LudoApp.Controllers
             request.RequestFormat = DataFormat.Json;
             var LudoGameResponse = client.Execute<GameModel>(request);
             GameModel tempmodel = LudoGameResponse.Data;
+
+            
 
             switch (tempmodel.GameStatus)
             {
@@ -100,20 +108,32 @@ namespace LudoApp.Controllers
 
             return  JsonConvert.SerializeObject(tempmodel);
         }
-        
+
         [HttpPost]
         public IActionResult PostGame()
         {
-            string name = Request.Form["playerName"];
-            string gamename = Request.Form["gameName"];
-            
-            HttpContext.Session.SetString("Player", name);
+            if (ModelState.IsValid)
+            {
 
-            RestRequest request = new RestRequest($"/api/game", Method.POST);
-            request.AddJsonBody(new { GameName = gamename, PlayerName = name });
-            var ludoGameResponse = client.Execute(request);
 
-            return RedirectToAction("GetGame", "Game", new { gameName = gamename });
+
+                string name = Request.Form["playerName"];
+                string gamename = Request.Form["gameName"];
+
+                HttpContext.Session.SetString("Player", name);
+
+                RestRequest request = new RestRequest($"/api/game", Method.POST);
+                request.AddJsonBody(new { GameName = gamename, PlayerName = name });
+                var ludoGameResponse = client.Execute(request);
+
+                return RedirectToAction("GetGame", "Game", new { gameName = gamename });
+            }
+            else
+            {
+                return NotFound();
+
+            }
+
         }
 
         [HttpGet]
@@ -126,16 +146,25 @@ namespace LudoApp.Controllers
         public IActionResult AddPlayer([FromBody] DummyGame dummyGame)
         {
 
-            HttpContext.Session.SetString("Player",dummyGame.PlayerName);
+            if (ModelState.IsValid)
+            {
 
-            RestRequest request = new RestRequest("/api/game/addplayer", Method.POST);
-            request.AddHeader("Content-type", "application/json");
-            request.AddJsonBody(new { gameName = dummyGame.GameName, PlayerName = dummyGame.PlayerName });
 
-            logger.LogInformation($"Adding player '{dummyGame.PlayerName}' to game '{dummyGame.GameName}'");
 
-            var clientresponse = client.Execute(request);
-            return Ok();
+                HttpContext.Session.SetString("Player", dummyGame.PlayerName);
+
+                RestRequest request = new RestRequest("/api/game/addplayer", Method.POST);
+                request.AddHeader("Content-type", "application/json");
+                request.AddJsonBody(new { gameName = dummyGame.GameName, PlayerName = dummyGame.PlayerName });
+
+                logger.LogInformation($"Adding player '{dummyGame.PlayerName}' to game '{dummyGame.GameName}'");
+
+                var clientresponse = client.Execute(request);
+                return Ok();
+            }
+            else
+                return NotFound();
+            
         }
 
 

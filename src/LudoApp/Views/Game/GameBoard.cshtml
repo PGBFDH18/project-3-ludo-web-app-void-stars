@@ -38,7 +38,7 @@
         {
 
             <h5>ID: @piece.Id , Position: @piece.Position </h5>
-            <button id="@player.Name btn" onclick="MovePiece(@piece.Id)">@player.Name</button>
+            <button id="@player.Name @piece.Id btn" onclick="MovePiece(@piece.Id)">@player.Name</button>
         }
     }
 
@@ -78,8 +78,7 @@
         GetGameData();
         }
 
-    //FirstPlayer
-    //Working fine
+ 
 
         function MovePiece(pieceId) {
             $.ajax({
@@ -100,17 +99,14 @@
             url: "/Game/GetGameModel?gameName="+"@Model.GameName",
                 type: "GET",
             contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                alert(data);
+                success: function (data) {
+                    alert(data);
 
-                var Object = JSON.parse(data);
-
-                if (data.currentTurn != @Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder) {
-                    document.getElementById('RollBtn').disabled = true; 
+                    var Object = JSON.parse(data);
                 }
-
-
-            }
+               
+                
+                
             });
         }
 
