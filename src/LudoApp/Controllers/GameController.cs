@@ -14,13 +14,17 @@ namespace LudoApp.Controllers
     public class DummyGame
     {
         [Required]
+        [StringLength(50)]
         public string GameName { get; set; }
         [Required]
+        [StringLength(50)]
         public string PlayerName { get; set; }
     }
 
     public class DummyGamePiece : DummyGame
     {
+        [Required]
+        [Range(0,3)]
         public string PieceId { get; set; }
     }
 
@@ -53,13 +57,16 @@ namespace LudoApp.Controllers
         [HttpGet]
         public ActionResult GetGame([FromQuery] string gameName)
         {
+            
+            if (gameName == null || gameName == "")
+                return NotFound();
+
             RestRequest request = new RestRequest($"/api/game/gamebyid?gameName={gameName}", Method.GET);
             
             request.RequestFormat = DataFormat.Json;
             var LudoGameResponse = client.Execute<GameModel>(request);
             GameModel tempmodel = LudoGameResponse.Data;
 
-            
 
             switch (tempmodel.GameStatus)
             {
@@ -148,9 +155,7 @@ namespace LudoApp.Controllers
 
             if (ModelState.IsValid)
             {
-
-
-
+                
                 HttpContext.Session.SetString("Player", dummyGame.PlayerName);
 
                 RestRequest request = new RestRequest("/api/game/addplayer", Method.POST);
@@ -180,7 +185,7 @@ namespace LudoApp.Controllers
 
             logger.LogInformation($"Player '{gameInstance.PlayerName}' is moving piece {gameInstance.PieceId} in game '{gameInstance.GameName}'");
 
-            var ludoGameResponse = client.Execute(request);
+            var ludoGameResponse = client.Execute(request); 
         }
 
         [HttpPost]
