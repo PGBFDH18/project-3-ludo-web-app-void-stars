@@ -67,7 +67,7 @@
         $.ajax({
             url: "/Game/RollDie",
             type: "POST",
-            data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "FirstPlayer"  }), //  FirstPlayer is the only client making calls, CHANGE TO ViewBag.Player When Testing Sessions
+            data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "@ViewBag.Player"  }), //  FirstPlayer is the only client making calls, CHANGE TO ViewBag.Player When Testing Sessions
             contentType: "application/json; charset=utf-8",
             success: function (data) {
                 alert(data);
@@ -84,7 +84,7 @@
             $.ajax({
             url: "/Game/MovePiece",
                 type: "POST",
-                data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "FirstPlayer", PieceId: pieceId }), // Same story here
+                data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: "@ViewBag.Player", PieceId: pieceId }), // Same story here
             contentType: "application/json; charset=utf-8",
             success: function (data) {
                 alert(data);
