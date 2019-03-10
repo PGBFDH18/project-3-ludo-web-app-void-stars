@@ -49,7 +49,7 @@ namespace LudoApp.Controllers
             logger.LogInformation($"Show index page for player {ViewBag.Player}");
 
 
-            
+             
 
             return View(ludoGameResponse.Data);
         }
@@ -67,6 +67,7 @@ namespace LudoApp.Controllers
             var LudoGameResponse = client.Execute<GameModel>(request);
             GameModel tempmodel = LudoGameResponse.Data;
 
+           
 
             switch (tempmodel.GameStatus)
             {
@@ -175,7 +176,7 @@ namespace LudoApp.Controllers
 
 
         [HttpPost]
-        public void MovePiece([FromBody] DummyGamePiece gameInstance)
+        public int MovePiece([FromBody] DummyGamePiece gameInstance)
         {
             RestRequest request = new RestRequest($"/api/game/MovePiece", Method.POST);
             request.AddHeader("Content-type", "application/json");
@@ -185,7 +186,16 @@ namespace LudoApp.Controllers
 
             logger.LogInformation($"Player '{gameInstance.PlayerName}' is moving piece {gameInstance.PieceId} in game '{gameInstance.GameName}'");
 
-            var ludoGameResponse = client.Execute(request); 
+            var ludoGameResponse = client.Execute(request);
+
+            RestRequest gameRequest = new RestRequest($"/api/game/gamebyid?gameName={gameInstance.GameName}", Method.GET);
+
+            gameRequest.RequestFormat = DataFormat.Json;
+            var gameLudoGameResponse = client.Execute<GameModel>(gameRequest);
+            GameModel tempmodel = gameLudoGameResponse.Data;
+
+            return tempmodel.Players.Where(x => x.Name == gameInstance.PlayerName).First().
+                Pieces.Where(c => c.Id.ToString() == gameInstance.PieceId).First().Position;
         }
 
         [HttpPost]

@@ -23,6 +23,9 @@ namespace LudoApp.Models
         [ListRange(2,4)]
         public List<PlayerModel> Players { get; set; }
 
+        [Required]
+        public int LastRollResult { get; set; }
+
         public int CurrentTurn { get; set; }
 
         //not using id, we identify ID by name, restricting identical GameModel.GameName To exists

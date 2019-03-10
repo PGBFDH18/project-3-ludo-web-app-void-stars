@@ -25,7 +25,7 @@ namespace LudoEngine
             this.ID = ID;
             State = PieceState.Fence;
             PieceColor = color;
-            SpaceFromGoal = 57;
+            SpaceFromGoal = 58;
         }
 
        
@@ -59,39 +59,45 @@ namespace LudoEngine
 
         public void movePiece(int spaces)
         {
-            if (PieceState.Board == State)
+           if (spaces <= 6)
             {
 
-                if (Position + spaces > 52)
+                
+
+                if (PieceState.Board == State)
                 {
-                    Position += spaces - 52;
+
+                    if (Position + spaces > 52)
+                    {
+                        Position += spaces - 52;
+                    }
+                    else
+                    {
+                        Position += spaces;
+                    }
+
+                    SpaceFromGoal -= spaces;
+
+                    if (SpaceFromGoal <= 0)
+                    {
+                        State = PieceState.Goal;
+                    }
                 }
                 else
                 {
-                    Position += spaces;
-                }
-
-                SpaceFromGoal -= spaces;
-
-                if (SpaceFromGoal <= 0)
-                {
-                    State = PieceState.Goal;
-                }
-            }
-            else
-            {
-                if (spaces == 6)
-                {
-                    State = PieceState.Board;
-                    movePiece(6);
-                }
-                else if (spaces == 1)
-                {
-                    State = PieceState.Board;
-                    movePiece(1);
+                    if (spaces == 6)
+                    {
+                        State = PieceState.Board;
+                        movePiece(6);
+                    }
+                    else if (spaces == 1)
+                    {
+                        State = PieceState.Board;
+                        movePiece(1);
+                    }
                 }
             }
-
+            
         }
     }
 }

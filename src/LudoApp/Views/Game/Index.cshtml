@@ -12,6 +12,10 @@
 
 @foreach (GameModel game in Model)
 {
+    if (game.GameStatus == "Lobby")
+    {
+
+
     <h1>@game.GameName : @game.Players.Count()</h1>
     <form action="game/GetGame" method="get">
         <input type="hidden" name="gameName" value="@game.GameName"> <br>
@@ -20,6 +24,7 @@
         <input type="submit" value="Join">
         }
     </form>
+    }
 }
 
 

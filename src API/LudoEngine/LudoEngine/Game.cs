@@ -73,7 +73,7 @@ namespace LudoEngine
 
         public Player hasPlayerWon()
         {
-            Player tempVictor = Players.Where(x => x.playerHasWon()).FirstOrDefault();
+            Player tempVictor = Players.Where(x => x.playerHasWon() == true).FirstOrDefault();
             if (tempVictor == null)
                 return null;
             else

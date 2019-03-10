@@ -89,7 +89,13 @@ namespace LudoAPI.Controllers
 
             if (currentGame.CurrentTurn == currentPlayer.turnOrder)
             {
+               
                 int real = _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault().LatestRoll = _dice.Roll();
+
+                if(currentPlayer.Pieces.Where(x => x.State.ToString() == "Fence").Count() == 4 && real != 1 && real != 6)
+                {
+                    currentGame.PassTurn();
+                }
 
                 return real;
             }

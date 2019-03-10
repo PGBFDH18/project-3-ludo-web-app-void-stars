@@ -13,6 +13,7 @@ namespace LudoAPI.Models
         public int CurrentTurn { get; set; }
         public string GameStatus { get; set; }
         public List<PlayerModel> Players { get; set; }
+        public int LastRollResult { get; set; }
 
         public GameModel(LudoEngine.Game game)
         {
@@ -21,6 +22,7 @@ namespace LudoAPI.Models
             Players = new List<PlayerModel>();
             GameName = game.NameOfGameInstance;
             GameStatus = game.GameStatus.ToString();
+            LastRollResult = game.LatestRoll;
 
             foreach(LudoEngine.Player libPlayer in game.Players)
             {
