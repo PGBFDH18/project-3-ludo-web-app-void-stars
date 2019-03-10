@@ -16,7 +16,7 @@ namespace LudoEngine
         public int CurrentTurn { get; set; }
         public int MaxTurn { get; set; }
         public List<Player> Players { get; set; }
-        public int LatestRoll { get; set; }
+        public int LatestRoll { get; set; } = 0;
 
         public Utils GameStatus { get; private set; }
         public string PrivateKey { get;private set; }

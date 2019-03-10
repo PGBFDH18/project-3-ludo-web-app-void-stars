@@ -4,7 +4,7 @@
 }
 
 
-<button id="RollBtn" onclick="RollDie('@ViewBag.Player')">player1</button> <br />
+<button id="RollBtn" onclick="RollDie('@ViewBag.Player')">Roll Dice</button> <br />
 
 
 <h2 id="CurrentPlayer">@Model.Players.Where(x => x.TurnOrder == Model.CurrentTurn).First().Name</h2>
@@ -48,7 +48,7 @@ else
             <span id="@player.Name @piece.Id pos">Position: @piece.Position </span>
         }
 
-        <button id="@player.Name @piece.Id btn" onclick="MovePiece('@player.Name',@piece.Id)">@player.Name</button> <br />
+        <button id="@player.Name @piece.Id btn" onclick="MovePiece('@player.Name',@piece.Id)">Move Piece</button> <br />
 
 
     }
@@ -64,13 +64,13 @@ else
         if (player.TurnOrder == Model.CurrentTurn && player.Name == ViewBag.Player)
         {
             <script>
-            document.getElementById"(@player.Name" +  @piecem.Id +" btn").hidden = false;
+            document.getElementById("@player.Name " +  "@piecem.Id" +" btn").hidden = false;
             </script>
         }
         else
         {
             <script>
-            document.getElementById("@player.Name " + @piecem.Id + " btn").hidden = true;
+            document.getElementById("@player.Name " + "@piecem.Id" + " btn").hidden = true;
             </script>
         }
     }
@@ -90,7 +90,7 @@ else
             data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: name  }), //  FirstPlayer is the only client making calls, CHANGE TO ViewBag.Player When Testing Sessions
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-                alert(data);
+                
 
                 if (data != 0 || data != -1 || data == null) {
                     document.getElementById("RollResult").innerHTML = data;
@@ -111,7 +111,7 @@ else
                 data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: name, PieceId: pieceId }), // Same story here
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-                alert(data);
+               
 
                 if (data != 0 || data != -1 || data == null) {
                     document.getElementById(name + " " + pieceId + " pos").innerHTML = "Position: " + data;
@@ -138,7 +138,7 @@ else
                     
 
 
-                    console.log(Object.Players);
+                    
                     //Change all position values
                     for (var player in Object.Players) {
                         for (var piece in Object.Players[player].Pieces) {
@@ -152,7 +152,7 @@ else
                     }
                     //change Roll Value
 
-                    console.log(@Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder + ": " + Object.TurnOrder);
+                    
                     
 
                     if (@Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder == Object.CurrentTurn) {
@@ -182,14 +182,14 @@ else
 
                     
                     //change last roll result
-                    document.getElementById("RollResult").innerHTML ="Dice Roll: " Object.LastRollResult;
+                    document.getElementById("RollResult").innerHTML ="Dice Roll: " + Object.LastRollResult;
                    
 
                     for (var player in Object.Players) {
                         if (Object.Players[player].TurnOrder == Object.CurrentTurn) {
 
                             
-                            document.getElementById("CurrentPlayer").innerHTML = Object.Players[player].Name + "'s turn";
+                            document.getElementById("CurrentPlayer").innerHTML = Object.Players[player].Name + "s turn";
                         }
                     }
 
