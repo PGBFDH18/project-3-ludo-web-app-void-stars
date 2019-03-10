@@ -21,6 +21,7 @@ namespace LudoEngine
         public Utils GameStatus { get; private set; }
         public string PrivateKey { get;private set; }
         public string Victor { get;private set; }
+        public bool HasRolled { get; set; } = false;
         
         
 
@@ -120,6 +121,8 @@ namespace LudoEngine
 
         public void PassTurn()
         {
+            HasRolled = false;
+
             if (CurrentTurn == Players.Count)
                 CurrentTurn = 1;
             else

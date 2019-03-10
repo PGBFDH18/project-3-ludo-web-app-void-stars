@@ -81,7 +81,7 @@ else
 
 <script>
 
- 
+    
 
     function RollDie(name) {
         $.ajax({
@@ -95,6 +95,8 @@ else
                 if (data != 0 || data != -1 || data == null) {
                     document.getElementById("RollResult").innerHTML = data;
                     LastRoll = data;
+                    document.getElementById("RollBtn").hidden = true;
+                   
                 }
             }
         });
@@ -104,21 +106,24 @@ else
 
 
 
-        function MovePiece(name,pieceId) {
+    function MovePiece(name, pieceId) {
+
+       
             $.ajax({
-            url: "/Game/MovePiece",
+                url: "/Game/MovePiece",
                 type: "POST",
                 data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: name, PieceId: pieceId }), // Same story here
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-               
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
 
-                if (data != 0 || data != -1 || data == null) {
-                    document.getElementById(name + " " + pieceId + " pos").innerHTML = "Position: " + data;
+
+                    if (data != 0 || data != -1 || data == null) {
+                        document.getElementById(name + " " + pieceId + " pos").innerHTML = "Position: " + data;
+                        
+                    }
                 }
-            }
             });
-
+        
             GetGameData();
         }
 
@@ -151,10 +156,7 @@ else
                         }
                     }
                     //change Roll Value
-
                     
-                    
-
                     if (@Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder == Object.CurrentTurn) {
 
                         for (var piece in Object.Players[cPlayer].Pieces) {

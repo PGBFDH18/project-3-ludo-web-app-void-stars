@@ -87,13 +87,16 @@ namespace LudoAPI.Controllers
             Game currentGame = _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault();
             Player currentPlayer = currentGame.Players.Where(x => x.Name == gameInstance.PlayerName).FirstOrDefault();
 
-            if (currentGame.CurrentTurn == currentPlayer.turnOrder)
+            if (currentGame.CurrentTurn == currentPlayer.turnOrder && currentGame.HasRolled == false)
             {
                
                 int real = _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault().LatestRoll = _dice.Roll();
 
-                if(currentPlayer.Pieces.Where(x => x.State.ToString() == "Fence").Count() == 4 && real != 1 && real != 6)
+                _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault().HasRolled = true;
+
+                if (currentPlayer.Pieces.Where(x => x.State.ToString() == "Fence").Count() == 4 && real != 1 && real != 6)
                 {
+                    _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault().HasRolled = false;
                     currentGame.PassTurn();
                 }
 
@@ -110,10 +113,12 @@ namespace LudoAPI.Controllers
             Game currentGame = _gameEngine.LoadGames(gameInstance.GameName).First();
             Player currentPlayer = currentGame.Players.Where(x => x.Name == gameInstance.PlayerName).First();
 
-            if (currentGame.CurrentTurn == currentPlayer.turnOrder)
+            if (currentGame.CurrentTurn == currentPlayer.turnOrder && currentGame.HasRolled == true)
             {
 
                 _gameEngine.LoadGames(gameInstance.GameName).First().PlayerMovePiece(gameInstance.pieceId);
+
+                _gameEngine.LoadGames(gameInstance.GameName).FirstOrDefault().HasRolled = false;
 
                 if (_gameEngine.LoadGames(gameInstance.GameName).First().GameStatus == Utils.Won)
                 {
