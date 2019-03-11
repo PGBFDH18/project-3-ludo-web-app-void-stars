@@ -166,7 +166,16 @@ namespace LudoApp.Controllers
                 logger.LogInformation($"Adding player '{dummyGame.PlayerName}' to game '{dummyGame.GameName}'");
 
                 var clientresponse = client.Execute(request);
-                return Ok();
+
+                if(clientresponse.IsSuccessful)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
+                
             }
             else
                 return NotFound();

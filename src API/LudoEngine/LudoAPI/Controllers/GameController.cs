@@ -76,9 +76,18 @@ namespace LudoAPI.Controllers
         [HttpPost("AddPlayer")]
         public ActionResult AddPlayer([FromBody]DummyGame temp)
         {
-            
-            _gameEngine.LoadGames(temp.GameName).Where(x => x.NameOfGameInstance == temp.GameName).
+
+            if(_gameEngine.LoadGames(temp.GameName).Where(x => x.NameOfGameInstance == temp.GameName).First().Players.Where(y => y.Name == temp.PlayerName).Any())
+            {
+                return NotFound();
+            }
+            else
+            {
+                _gameEngine.LoadGames(temp.GameName).Where(x => x.NameOfGameInstance == temp.GameName).
                 First().AddPlayer(temp.PlayerName);
+            }
+            
+            
             return Ok();
         }
 
