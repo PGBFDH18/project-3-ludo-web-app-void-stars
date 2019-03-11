@@ -1,10 +1,10 @@
-##Index Alternatives
+## Index Alternatives
 
 * Create new game
 * Join lobby
 
 
-##Create new game
+## Create new game
 
 1. Write the name of your player
 
@@ -25,7 +25,7 @@
 
 
 
-##Join Lobby
+## Join Lobby
 
 1. Write your name and press the Join Button
 
