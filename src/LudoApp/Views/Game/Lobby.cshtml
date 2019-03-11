@@ -19,25 +19,30 @@
 }
 
 
-<textarea id="textArea"></textarea>
 
 @if (ViewBag.Player == "" || ViewBag.Player == null)
 {
-<button id="Hellobutton" onclick="aFunction()">Join Game</button>
+    <input type="text" id="textArea" />
+    <button id="Hellobutton" onclick="AddPlayer()">Join Game</button>
+
 }
 
 
 @if ((ViewBag.Player != null && ViewBag.Player != "") && Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder == 1)
 {
-<button id="StartButton" onclick="StartGame()">Start Game</button>
+    <button id="StartButton" onclick="StartGame()">Start Game</button>
+}
+else
+{
+    <p>Waiting for leader to start</p>
 }
 
 
 <script>
 
-   
-    
-    function aFunction() {
+    var LastObject = undefined;
+
+    function AddPlayer() {
         var playername = $("#textArea").val();
         var gamename = "@Model.GameName";
 
@@ -48,6 +53,8 @@
             contentType: "application/json; charset=utf-8",
             success: function (data) {
                 window.location.reload(true);
+
+
             }
         });
     }
@@ -65,10 +72,35 @@
         });
     }
 
-    window.setInterval(function () { location.reload(); }, 7000);
+    function CheckStart() {
+        $.ajax({
+            url: "/Game/GetGameModel?gameName="+"@Model.GameName",
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
 
-    
-    
+
+
+                var Object = JSON.parse(data);
+
+                if (LastObject == undefined) {
+                    LastObject = Object;
+                    return;
+                }
+
+                if (Object.GameStatus == "Running" || JSON.stringify(LastObject) != JSON.stringify(Object)) {
+                    window.location.reload(true);
+                }
+
+            }
+        });
+
+    }
+
+    window.setInterval(CheckStart, 3000);
+
+
+
 </script>
 
 

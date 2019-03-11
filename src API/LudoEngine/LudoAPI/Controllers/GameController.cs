@@ -59,6 +59,7 @@ namespace LudoAPI.Controllers
         [HttpGet]
         public ActionResult<List<GameModel>> ActiveGames()
         {
+
             List<GameModel> games = new List<GameModel>();
             _gameEngine.LoadGames("All").ForEach(x => games.Add(new GameModel(x)));
             return games;

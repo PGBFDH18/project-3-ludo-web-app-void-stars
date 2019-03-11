@@ -9,33 +9,35 @@
 
 <a href="/Game/CreateGame">Create a new game!</a>
 
-
-@foreach (GameModel game in Model)
-{
-    if (game.GameStatus == "Lobby")
+<div id="Games-tag">
+    @foreach (GameModel game in Model)
     {
-
-
-    <h1>@game.GameName : @game.Players.Count()</h1>
-    <form action="game/GetGame" method="get">
-        <input type="hidden" name="gameName" value="@game.GameName"> <br>
-        @if (game.Players.Where(x => x.Name == ViewBag.Player || ViewBag.Player == null || ViewBag.Player == "").Any())
+        if (game.GameStatus == "Lobby")
         {
-        <input type="submit" value="Join">
+
+
+            <h1>@game.GameName : @game.Players.Count()</h1>
+            <form action="game/GetGame" method="get">
+                <input type="hidden" name="gameName" value="@game.GameName"> <br>
+                @if (game.Players.Where(x => x.Name == ViewBag.Player || ViewBag.Player == null || ViewBag.Player == "").Any())
+                {
+                    <input type="submit" value="Join">
+                }
+            </form>
         }
-    </form>
     }
-}
+    </div>
 
 
 
 
 
-<script src="~/js/GameHub.js"></script>
+    <script src="~/js/GameHub.js"></script>
 
-<script>
+    <script>
+        
         setTimeout(function () { window.location.reload() }, 10000);
-</script>
+    </script>
 
 
 
