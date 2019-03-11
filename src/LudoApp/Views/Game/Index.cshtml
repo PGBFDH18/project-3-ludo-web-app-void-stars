@@ -1,0 +1,44 @@
+﻿@model IEnumerable<LudoApp.Models.GameModel>;
+
+@{
+    ViewData["Title"] = "GetGames";
+    Layout = "_Layout";
+}
+
+<h2>View</h2>
+
+<a href="/Game/CreateGame">Create a new game!</a>
+
+<div id="Games-tag">
+    @foreach (GameModel game in Model)
+    {
+        if (game.GameStatus == "Lobby")
+        {
+
+
+            <h1>@game.GameName : @game.Players.Count()</h1>
+            <form action="game/GetGame" method="get">
+                <input type="hidden" name="gameName" value="@game.GameName"> <br>
+                @if (game.Players.Where(x => x.Name == ViewBag.Player || ViewBag.Player == null || ViewBag.Player == "").Any())
+                {
+                    <input type="submit" value="Join">
+                }
+            </form>
+        }
+    }
+    </div>
+
+
+
+
+
+    <script src="~/js/GameHub.js"></script>
+
+    <script>
+        
+        setTimeout(function () { window.location.reload() }, 10000);
+    </script>
+
+
+
+

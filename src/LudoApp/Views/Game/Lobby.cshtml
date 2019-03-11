@@ -1,0 +1,114 @@
+﻿@model GameModel
+
+@{
+    ViewData["Title"] = "Lobby";
+    Layout = "_Layout";
+}
+
+<h2>Lobby</h2>
+
+
+<h4>@Model.GameName</h4>
+
+@for (int i = 0; i < 4; i++)
+{
+    @if (Model.Players.Count() - 1 >= i)
+    {
+        <h1>@Model.Players[i].Name</h1> <br />
+    }
+}
+
+
+
+@if (ViewBag.Player == "" || ViewBag.Player == null)
+{
+    <input type="text" id="textArea" />
+    <button id="Hellobutton" onclick="AddPlayer()">Join Game</button>
+
+}
+
+
+@if ((ViewBag.Player != null && ViewBag.Player != "") && Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder == 1)
+{
+    <button id="StartButton" onclick="StartGame()">Start Game</button>
+}
+else
+{
+    <p>Waiting for leader to start</p>
+}
+
+
+<script>
+
+    var LastObject = undefined;
+
+    function AddPlayer() {
+        var playername = $("#textArea").val();
+        var gamename = "@Model.GameName";
+
+        $.ajax({
+            url: "/Game/AddPlayer",
+            type: "POST",
+            data: JSON.stringify({ PlayerName: playername, GameName: gamename }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                window.location.reload(true);
+
+
+            }
+        });
+    }
+
+    function StartGame() {
+        var gamename = "@Model.GameName";
+        $.ajax({
+            url: "/Game/StartGame",
+            type: "POST",
+            data: JSON.stringify({ PlayerName: "@ViewBag.Player", GameName: gamename }),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                window.location.reload(true);
+            }
+        });
+    }
+
+    function CheckStart() {
+        $.ajax({
+            url: "/Game/GetGameModel?gameName="+"@Model.GameName",
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+
+
+                var Object = JSON.parse(data);
+
+                if (LastObject == undefined) {
+                    LastObject = Object;
+                    return;
+                }
+
+                if (Object.GameStatus == "Running" || JSON.stringify(LastObject) != JSON.stringify(Object)) {
+                    window.location.reload(true);
+                }
+
+            }
+        });
+
+    }
+
+    window.setInterval(CheckStart, 3000);
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+

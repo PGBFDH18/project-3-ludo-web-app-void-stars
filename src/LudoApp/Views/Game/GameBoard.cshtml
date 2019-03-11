@@ -1,0 +1,210 @@
+﻿@model GameModel
+@{
+    ViewData["Title"] = "GameBoard";
+}
+
+
+<button id="RollBtn" onclick="RollDie('@ViewBag.Player')">Roll Dice</button> <br />
+
+
+<h2 id="CurrentPlayer">@Model.Players.Where(x => x.TurnOrder == Model.CurrentTurn).First().Name</h2>
+<h3 id="RollResult">No Rolls Has been Made</h3>
+
+
+
+
+
+
+
+@if (ViewBag.Player == Model.Players.Where(player => player.TurnOrder == Model.CurrentTurn).First().Name)
+{
+    <script>
+        document.getElementById("RollBtn").hidden = false;
+    </script>
+}
+else
+{
+    <script>
+        document.getElementById("RollBtn").hidden = true;
+    </script>
+}
+
+@foreach (PlayerModel player in Model.Players)
+{
+
+    <h4>@player.Name</h4>
+
+    foreach (PieceModel piece in player.Pieces)
+    {
+
+        <span>ID: @piece.Id </span>
+
+        @if (piece.State == "Goal")
+        {
+            <span> Position: "Goal"</span>
+        }
+        else
+        {
+            <span id="@player.Name @piece.Id pos">Position: @piece.Position </span>
+        }
+
+        <button id="@player.Name @piece.Id btn" onclick="MovePiece('@player.Name',@piece.Id)">Move Piece</button> <br />
+
+
+    }
+}
+
+@foreach (PlayerModel player in Model.Players)
+{
+
+
+    foreach (PieceModel piecem in @Model.Players.Where(x => x.Name == player.Name).First().Pieces)
+    {
+
+        if (player.TurnOrder == Model.CurrentTurn && player.Name == ViewBag.Player)
+        {
+            <script>
+            document.getElementById("@player.Name " +  "@piecem.Id" +" btn").hidden = false;
+            </script>
+        }
+        else
+        {
+            <script>
+            document.getElementById("@player.Name " + "@piecem.Id" + " btn").hidden = true;
+            </script>
+        }
+    }
+}
+
+
+
+
+<script>
+
+    
+
+    function RollDie(name) {
+        $.ajax({
+            url: "/Game/RollDie",
+            type: "POST",
+            data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: name  }), //  FirstPlayer is the only client making calls, CHANGE TO ViewBag.Player When Testing Sessions
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                
+
+                if (data != 0 || data != -1 || data == null) {
+                    document.getElementById("RollResult").innerHTML = data;
+                    LastRoll = data;
+                    document.getElementById("RollBtn").hidden = true;
+                   
+                }
+            }
+        });
+
+        GetGameData();
+        }
+
+
+
+    function MovePiece(name, pieceId) {
+
+       
+            $.ajax({
+                url: "/Game/MovePiece",
+                type: "POST",
+                data: JSON.stringify({ GameName: "@Model.GameName", PlayerName: name, PieceId: pieceId }), // Same story here
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+
+                    if (data != 0 || data != -1 || data == null) {
+                        document.getElementById(name + " " + pieceId + " pos").innerHTML = "Position: " + data;
+                        
+                    }
+                }
+            });
+        
+            GetGameData();
+        }
+
+        function GetGameData() {
+            $.ajax({
+            url: "/Game/GetGameModel?gameName="+"@Model.GameName",
+                type: "GET",
+            contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+
+
+                    
+                    var cPlayer;
+                    var Object = JSON.parse(data);
+
+                    
+
+
+                    
+                    //Change all position values
+                    for (var player in Object.Players) {
+                        for (var piece in Object.Players[player].Pieces) {
+                            document.getElementById(Object.Players[player].Name + " " + Object.Players[player].Pieces[piece].Id + " pos").innerHTML = "Position: " + Object.Players[player].Pieces[piece].Position;
+
+                            if (Object.Players[player].Name == "@ViewBag.Player") {
+                                cPlayer = player;
+                            }
+
+                        }
+                    }
+                    //change Roll Value
+                    
+                    if (@Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder == Object.CurrentTurn) {
+
+                        for (var piece in Object.Players[cPlayer].Pieces) {
+                            document.getElementById("@ViewBag.Player "  + Object.Players[cPlayer].Pieces[piece].Id + " btn").hidden = false;
+                        }
+
+                    }
+                    else {
+                        for (var piece in Object.Players[cPlayer].Pieces) {
+
+                            document.getElementById("@ViewBag.Player " + Object.Players[cPlayer].Pieces[piece].Id + " btn").hidden = true;
+                            
+                        }
+                    }
+
+
+
+                    if (@Model.Players.Where(x => x.Name == ViewBag.Player).First().TurnOrder == Object.CurrentTurn) {
+
+                            document.getElementById("RollBtn").hidden = false;
+                    }
+                    else {
+                           document.getElementById("RollBtn").hidden = true;
+                    }
+
+                    
+                    //change last roll result
+                    document.getElementById("RollResult").innerHTML ="Dice Roll: " + Object.LastRollResult;
+                   
+
+                    for (var player in Object.Players) {
+                        if (Object.Players[player].TurnOrder == Object.CurrentTurn) {
+
+                            
+                            document.getElementById("CurrentPlayer").innerHTML = Object.Players[player].Name + "s turn";
+                        }
+                    }
+
+                   
+
+
+                }
+                    });
+    }
+
+    window.setInterval(GetGameData, 3000);
+
+
+            </script>
+
+
